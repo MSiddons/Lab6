@@ -1,18 +1,55 @@
 #include <iostream>
 #include <vector>
+#include <iomanip>
 
 using namespace std;
 
 //Q1------------------------------------------------------------------------------------------------
 int next_visitor(vector<bool> &occupied)
 {
+	vector<int> emptyCount;
+	int run;
+	for (int i = 1; i <= 10; i++)
+	{
+		if (occupied[i] == occupied[i] + 1)
+			run++;
+		else
+			if (run)
+			{
+				run++;
+				emptyCount.push_back(run);
+				run = 0;
+			}
+	}
 
+	int max = emptyCount[0];
+	for (int i = 0; i < 12; i++)
+	{
+		if (emptyCount[i] > max)
+			max = emptyCount[i];
+	}
+	occupied[lrint(emptyCount[max]/2)] = 1;
+
+	return();
+}
+void draw_stalls(vector<bool> &o)
+{
+	for (int i = 1; i <= 10; i++)
+		if (o[i] == 0)
+			cout << "_";
+		else
+			cout << "X";
+	cout << endl;
 }
 
 void exercise1()
 {
-	vector<bool> occupied;
+	vector<bool> occupied(12);
+	occupied[0] = 1;
+	occupied[11] = 1;
+	cout << "The next position is: " << next_visitor(occupied)<< endl;
 
+	//draw_stalls(occupied);
 }
 
 //Q2------------------------------------------------------------------------------------------------
