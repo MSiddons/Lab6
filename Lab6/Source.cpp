@@ -1,12 +1,17 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
 //Q1------------------------------------------------------------------------------------------------
+int next_visitor(vector<bool> &occupied)
+{
 
+}
 
 void exercise1()
 {
+	vector<bool> occupied;
 
 }
 
