@@ -2,17 +2,19 @@
 #include <vector>
 #include <iomanip>
 #include <string>
+#include <random>
+#include <time.h>
 
 using namespace std;
 
 //Q1------------------------------------------------------------------------------------------------
 int next_visitor(vector<bool> & occupied)
 {
-	vector <int> occPos; // list of occupied positions
+	vector<int> occPos; // list of occupied positions
 	int OccupiedSize = occupied.size();
 
 	// make a list of postion numbers currently empty
-	for (unsigned i = 0; i < OccupiedSize; i++)
+	for (int i = 0; i < OccupiedSize; i++)
 		if (occupied[i])
 			occPos.push_back(i);
 
@@ -34,7 +36,7 @@ int next_visitor(vector<bool> & occupied)
 	// check list of positions and find the largest gap, store larger of the two numbers as max
 	int max = 0, last = 0, gap;
 	occPos.push_back(OccupiedSize + 1);
-	for (unsigned i = 0; i < (occPosSize + 1); i++)
+	for (int i = 0; i < (occPosSize + 1); i++)
 	{
 		if ((occPos[i] - last) > max)
 		{
@@ -54,7 +56,7 @@ int next_visitor(vector<bool> & occupied)
 
 void draw_stalls(vector<bool> const & occupied)
 {
-	for (unsigned i = 0; i < occupied.size(); i++)
+	for (int i = 0; i < occupied.size(); i++)
 		cout << (occupied[i] ? "X" : "_");
 	cout << endl;
 }
@@ -65,7 +67,7 @@ void exercise1()
 	cout << "Number of urinals: ";
 	cin >> urinalNum;
 	vector<bool> urinals(urinalNum, false);
-	for (unsigned i = 0; i < urinals.size(); i++)
+	for (int i = 0; i < urinals.size(); i++)
 	{
 		cout << "Next position is number: " << next_visitor(urinals) << endl;
 		draw_stalls(urinals);
@@ -75,10 +77,71 @@ void exercise1()
 
 //Q2------------------------------------------------------------------------------------------------
 
+void draw_piles(vector<int> const & pile)
+{
+	for (int i = 0; i < pile.size(); i++)
+		cout << pile[i] << ", ";
+	cout << endl;
+}
+
+void form_new_pile(vector<int> & pile)
+{
+	bool removed = 0;
+	for (int i = 0; i < pile.size(); i++)
+	{
+		pile[i]--;
+		if (pile[i] == 0)
+			removed = 1;
+	}
+	pile.push_back(pile.size());
+
+	if (removed != 0)
+		for (int i = 0; i < pile.size(); i++)
+		{
+			if (pile[i] == 0)
+				pile.erase(pile.begin() + i);
+		}
+}
+
+int complete_check(vector<int> pile)
+{
+	int max = 0;
+	for (int i = 0; i < pile.size(); i++)
+		if (pile[i] > max)
+			max = pile[i];
+	if (max > 9)
+		return 1;
+
+	vector<int> run;
+	for (int i = 1; i < 10; i++)
+		run.push_back(i);
+	for (int i = 0; i < pile.size(); i++)
+		for (int j = 0; j < run.size(); j++)
+		{
+			if (pile[i] == run[j])
+				run.erase(run.begin() + j);
+		}
+	if (run.size() == 0) // shit hit the fan somewhere here fuck it idk
+		return 0;
+}
 
 void exercise2()
 {
-
+	vector<int> pile;
+	int pack = 45;
+	for (int i = 0; i < 4; i++)
+	{
+		pile.push_back(rand() % (pack - 5 + i) + 1);
+		pack = pack - pile[i];
+	}
+	pile.push_back(pack);
+	draw_piles(pile);
+	while (complete_check(pile) != 0)
+	{
+		form_new_pile(pile);
+		draw_piles(pile);
+	}
+	cout << "Complete" << endl << endl;
 }
 
 //Q3------------------------------------------------------------------------------------------------
@@ -117,6 +180,7 @@ void exercise6()
 //Menu------------------------------------------------------------------------------------------------
 int main()
 {
+	srand(time(0));
 	int exercise = -1;
 	while (exercise != 0)
 	{
