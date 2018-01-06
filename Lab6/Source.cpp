@@ -1,55 +1,76 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <string>
 
 using namespace std;
 
 //Q1------------------------------------------------------------------------------------------------
-int next_visitor(vector<bool> &occupied)
+int next_visitor(vector<bool> & occupied)
 {
-	vector<int> emptyCount;
-	int run;
-	for (int i = 1; i <= 10; i++)
+	vector <int> occPos; // list of occupied positions
+	int OccupiedSize = occupied.size();
+
+	// make a list of postion numbers currently empty
+	for (unsigned i = 0; i < OccupiedSize; i++)
+		if (occupied[i])
+			occPos.push_back(i);
+
+	// check if entire occupied vector has one position remaining, it'll be element 0, fill it and end.
+	int occPosSize = occPos.size();
+	if ((OccupiedSize - 1) == occPosSize)
 	{
-		if (occupied[i] == occupied[i] + 1)
-			run++;
-		else
-			if (run)
-			{
-				run++;
-				emptyCount.push_back(run);
-				run = 0;
-			}
+		occupied[0] = 1;
+		return 1;
 	}
 
-	int max = emptyCount[0];
-	for (int i = 0; i < 12; i++)
+	// check if entire occupied vector is empty, if true change value of middle element to true and return the position of the element changed
+	if (occPosSize == 0)
 	{
-		if (emptyCount[i] > max)
-			max = emptyCount[i];
+		occupied[(OccupiedSize - 1) / 2] = 1;
+		return (OccupiedSize / 2);
 	}
-	occupied[lrint(emptyCount[max]/2)] = 1;
 
-	return();
+	// check list of positions and find the largest gap, store larger of the two numbers as max
+	int max = 0, last = 0, gap;
+	occPos.push_back(OccupiedSize + 1);
+	for (unsigned i = 0; i < (occPosSize + 1); i++)
+	{
+		if ((occPos[i] - last) > max)
+		{
+			max = occPos[i];
+			gap = occPos[i] - last - 1;
+		}
+		last = occPos[i];
+	}
+
+	// divide gap value by 2 and subtract it from max (above)
+	int insert = max - (gap / 2);
+
+	// change value of above element to 1 and return position of element changed
+	occupied[insert - 1] = 1;
+	return (insert);
 }
-void draw_stalls(vector<bool> &o)
+
+void draw_stalls(vector<bool> const & occupied)
 {
-	for (int i = 1; i <= 10; i++)
-		if (o[i] == 0)
-			cout << "_";
-		else
-			cout << "X";
+	for (unsigned i = 0; i < occupied.size(); i++)
+		cout << (occupied[i] ? "X" : "_");
 	cout << endl;
 }
 
 void exercise1()
 {
-	vector<bool> occupied(12);
-	occupied[0] = 1;
-	occupied[11] = 1;
-	cout << "The next position is: " << next_visitor(occupied)<< endl;
-
-	//draw_stalls(occupied);
+	int urinalNum;
+	cout << "Number of urinals: ";
+	cin >> urinalNum;
+	vector<bool> urinals(urinalNum, false);
+	for (unsigned i = 0; i < urinals.size(); i++)
+	{
+		cout << "Next position is number: " << next_visitor(urinals) << endl;
+		draw_stalls(urinals);
+	}
+	cout << "No positions remaining" << endl;
 }
 
 //Q2------------------------------------------------------------------------------------------------
@@ -92,13 +113,6 @@ void exercise6()
 
 }
 
-//Q7------------------------------------------------------------------------------------------------
-
-
-void exercise7()
-{
-
-}
 
 //Menu------------------------------------------------------------------------------------------------
 int main()
@@ -106,33 +120,17 @@ int main()
 	int exercise = -1;
 	while (exercise != 0)
 	{
-		cout << "Select an exercise number (1-7) or 0 to exit: ";
+		cout << "Select an exercise number (1-6) or 0 to exit: ";
 		cin >> exercise;
 		switch (exercise)
 		{
-		case 0:
-			break;
-		case 1:
-			exercise1();
-			break;
-		case 2:
-			exercise2();
-			break;
-		case 3:
-			exercise3();
-			break;
-		case 4:
-			exercise4();
-			break;
-		case 5:
-			exercise5();
-			break;
-		case 6:
-			exercise6();
-			break;
-		case 7:
-			exercise7();
-			break;
+		case 0: return 0; break;
+		case 1:	exercise1(); break;
+		case 2: exercise2(); break;
+		case 3:	exercise3(); break;
+		case 4:	exercise4(); break;
+		case 5:	exercise5(); break;
+		case 6:	exercise6(); break;
 
 		default:
 			cout << "Incorrect choice" << endl;
